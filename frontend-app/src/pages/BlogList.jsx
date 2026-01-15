@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchBlogs, fetchCategories } from '@/store/blogSlice';
 import { Helmet } from 'react-helmet-async';
 import { blogApi } from '@/services/blog.api';
 import BlogCard from '@/components/BlogCard';
@@ -7,63 +9,28 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function BlogList() {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [pagination, setPagination] = useState({
-    hasMore: false,
-    nextCursor: null,
-  });
-  const [error, setError] = useState(null);
-  const [categories, setCategories] = useState([]);
+  const dispatch = useDispatch();
+  const { blogs, pagination, loading, loadingMore, error, categories } = useSelector(
+    state => state.blogs
+  );
   const [selectedCategory, setSelectedCategory] = useState('');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  const fetchBlogs = useCallback(
-    async (cursor = null) => {
-      try {
-        if (cursor) {
-          setLoadingMore(true);
-        } else {
-          setLoading(true);
-          // reset list when loading first page (new filter/search)
-          setBlogs([]);
-          setPagination({ hasMore: false, nextCursor: null });
-        }
-
-        const params = {
-          cursor,
-          limit: 9,
-        };
-
-        if (selectedCategory) params.category = selectedCategory;
-        if (debouncedSearch) params.search = debouncedSearch;
-
-        const data = await blogApi.getAll(params);
-
-        if (cursor) {
-          setBlogs(prev => [...prev, ...data.blogs]);
-        } else {
-          setBlogs(data.blogs);
-        }
-
-        setPagination(data.pagination);
-      } catch (err) {
-        setError('Failed to load blogs. Please try again later.');
-        console.error('Error fetching blogs:', err);
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
+  const fetchBlogsLocal = useCallback(
+    cursor => {
+      const params = { cursor, limit: 9 };
+      if (selectedCategory) params.category = selectedCategory;
+      if (debouncedSearch) params.search = debouncedSearch;
+      dispatch(fetchBlogs(params));
     },
-    [selectedCategory, debouncedSearch]
+    [dispatch, selectedCategory, debouncedSearch]
   );
 
   // Fetch blogs on mount and whenever filters/search change
   useEffect(() => {
-    fetchBlogs();
-  }, [fetchBlogs]);
+    fetchBlogsLocal(null);
+  }, [fetchBlogsLocal]);
 
   // Debounce the search input
   useEffect(() => {
@@ -73,29 +40,12 @@ export default function BlogList() {
 
   // Load categories for the filter
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const data = await blogApi.getCategories();
-        if (!mounted) return;
-        const list = data.categories || data || [];
-        const normalized = (Array.isArray(list) ? list : []).map(item => {
-          if (typeof item === 'string') return item;
-          return (
-            item.name || item.category || item.label || item._id || JSON.stringify(item)
-          );
-        });
-        setCategories(normalized);
-      } catch (err) {
-        console.error('Failed to load categories', err);
-      }
-    })();
-    return () => (mounted = false);
-  }, []);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleLoadMore = () => {
     if (pagination.nextCursor && !loadingMore) {
-      fetchBlogs(pagination.nextCursor);
+      fetchBlogsLocal(pagination.nextCursor);
     }
   };
 
