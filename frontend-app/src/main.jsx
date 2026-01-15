@@ -5,13 +5,16 @@ import { Provider } from 'react-redux';
 import App from './App';
 import './index.css';
 import { store } from './store/store';
+import ErrorBoundary from './components/ErrorBoundary';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <HelmetProvider>
-        <App />
-      </HelmetProvider>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <HelmetProvider>
+          <App />
+        </HelmetProvider>
+      </Provider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

@@ -13,7 +13,7 @@ const api = axios.create({
 export const blogApi = {
   // Get all blogs (admin)
   getAll: async (params = {}) => {
-    const response = await api.get('/admin/blog', { params });
+    const response = await api.get('/admin/blogs', { params });
     return response.data;
   },
 
