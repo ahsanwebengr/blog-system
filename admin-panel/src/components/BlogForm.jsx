@@ -116,7 +116,7 @@ export default function BlogForm({ initialData = {}, onSubmit, isLoading }) {
             <CardHeader>
               <CardTitle>Blog Content</CardTitle>
             </CardHeader>
-            <CardContent className='space-y-4'>
+            <CardContent className='px-2.5 sm:px-5 space-y-4'>
               <div className='space-y-2'>
                 <Label htmlFor='title'>Title *</Label>
                 <Input

@@ -15,7 +15,7 @@ export default function Layout({ children }) {
       </header>
 
       {/* Main Content */}
-      <main className='container py-8'>{children}</main>
+      <main className='container px-2 sm:px-4 py-8'>{children}</main>
 
       {/* Footer */}
       <footer className='border-t py-8 mt-12'>

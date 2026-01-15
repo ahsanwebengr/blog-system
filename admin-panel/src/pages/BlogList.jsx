@@ -156,84 +156,90 @@ export default function BlogList() {
       {/* Filters */}
       <Card>
         <CardContent className='pt-6'>
-          <form onSubmit={handleSearch} className='flex gap-4 w-full items-center'>
-            <div className='flex-1 relative'>
+          <form
+            onSubmit={handleSearch}
+            className='flex flex-col md:flex-row gap-4 w-full items-center'
+          >
+            <div className='flex-1 relative w-full'>
               <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
               <Input
                 placeholder='Search title or summary'
                 value={filters.search}
                 onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className='pl-9'
+                className='pl-9 w-full'
               />
             </div>
+            <div className='flex gap-2 flex-wrap w-full md:w-auto'>
+              <Select
+                value={filters.status === '' ? 'all' : filters.status}
+                onValueChange={value =>
+                  setFilters(prev => ({
+                    ...prev,
+                    status: value === 'all' ? '' : value,
+                    page: 1,
+                  }))
+                }
+              >
+                <SelectTrigger className='w-full md:w-[160px]'>
+                  <SelectValue placeholder='All Status' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='all'>All Status</SelectItem>
+                  <SelectItem value='published'>Published</SelectItem>
+                  <SelectItem value='draft'>Draft</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={filters.status === '' ? 'all' : filters.status}
-              onValueChange={value =>
-                setFilters(prev => ({
-                  ...prev,
-                  status: value === 'all' ? '' : value,
-                  page: 1,
-                }))
-              }
-            >
-              <SelectTrigger className='w-[160px]'>
-                <SelectValue placeholder='All Status' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All Status</SelectItem>
-                <SelectItem value='published'>Published</SelectItem>
-                <SelectItem value='draft'>Draft</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select
+                value={filters.category || 'all'}
+                onValueChange={value =>
+                  setFilters(prev => ({
+                    ...prev,
+                    category: value === 'all' ? '' : value,
+                    page: 1,
+                  }))
+                }
+              >
+                <SelectTrigger className='w-full md:w-[160px]'>
+                  <SelectValue placeholder='All Categories' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='all'>All Categories</SelectItem>
+                  {categories.map(cat => (
+                    <SelectItem key={cat.category} value={cat.category}>
+                      {cat.category} ({cat.count})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={filters.category || 'all'}
-              onValueChange={value =>
-                setFilters(prev => ({
-                  ...prev,
-                  category: value === 'all' ? '' : value,
-                  page: 1,
-                }))
-              }
-            >
-              <SelectTrigger className='w-[160px]'>
-                <SelectValue placeholder='All Categories' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All Categories</SelectItem>
-                {categories.map(cat => (
-                  <SelectItem key={cat.category} value={cat.category}>
-                    {cat.category} ({cat.count})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <Select
+                value={filters.tag || 'all'}
+                onValueChange={value =>
+                  setFilters(prev => ({
+                    ...prev,
+                    tag: value === 'all' ? '' : value,
+                    page: 1,
+                  }))
+                }
+              >
+                <SelectTrigger className='w-full md:w-[160px]'>
+                  <SelectValue placeholder='All Tags' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='all'>All Tags</SelectItem>
+                  {tags.map(t => (
+                    <SelectItem key={t.tag} value={t.tag}>
+                      {t.tag} ({t.count})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={filters.tag || 'all'}
-              onValueChange={value =>
-                setFilters(prev => ({
-                  ...prev,
-                  tag: value === 'all' ? '' : value,
-                  page: 1,
-                }))
-              }
-            >
-              <SelectTrigger className='w-[160px]'>
-                <SelectValue placeholder='All Tags' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All Tags</SelectItem>
-                {tags.map(t => (
-                  <SelectItem key={t.tag} value={t.tag}>
-                    {t.tag} ({t.count})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Button type='submit'>Search</Button>
+              <Button type='submit' className='whitespace-nowrap'>
+                Search
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
@@ -258,7 +264,7 @@ export default function BlogList() {
           ))
         ) : blogs.length === 0 ? (
           <Card>
-            <CardContent className='p-12 text-center'>
+            <CardContent className='p-6 text-center'>
               <p className='text-muted-foreground'>No blogs found</p>
               <Button asChild className='mt-4'>
                 <Link to='/blogs/create'>Create your first blog</Link>
@@ -269,16 +275,16 @@ export default function BlogList() {
           blogs.map(blog => (
             <Card key={blog.id || blog._id}>
               <CardContent className='p-6'>
-                <div className='flex gap-4'>
+                <div className='flex flex-col md:flex-row gap-4'>
                   {/* Cover Image */}
                   {blog.coverImage?.url ? (
                     <img
                       src={blog.coverImage.url}
                       alt={blog.coverImage.alt || blog.title}
-                      className='h-24 w-40 object-cover rounded-md'
+                      className='w-full h-48 md:h-24 md:w-40 object-cover rounded-md'
                     />
                   ) : (
-                    <div className='h-24 w-40 bg-muted rounded-md flex items-center justify-center'>
+                    <div className='w-full h-48 md:h-24 md:w-40 bg-muted rounded-md flex items-center justify-center'>
                       <span className='text-muted-foreground text-sm'>No Image</span>
                     </div>
                   )}
@@ -287,19 +293,22 @@ export default function BlogList() {
                   <div className='flex-1 min-w-0'>
                     <div className='flex items-start justify-between gap-4'>
                       <div>
-                        <h3 className='font-semibold text-lg truncate'>{blog.title}</h3>
+                        <h3 className='font-semibold text-lg line-clamp-2'>
+                          {blog.title}
+                        </h3>
                         <p className='text-sm text-muted-foreground line-clamp-2 mt-1'>
                           {blog.summary}
                         </p>
                       </div>
                       <Badge
+                        className='capitalize'
                         variant={blog.status === 'published' ? 'success' : 'secondary'}
                       >
                         {blog.status}
                       </Badge>
                     </div>
 
-                    <div className='flex items-center gap-4 mt-3 text-sm text-muted-foreground'>
+                    <div className='flex flex-wrap items-center gap-4 mt-3 text-sm text-muted-foreground'>
                       <span>{blog.category}</span>
                       <span>•</span>
                       <span>{formatDate(blog.publishedAt || blog.createdAt)}</span>
