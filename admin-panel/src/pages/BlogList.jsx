@@ -38,6 +38,7 @@ export default function BlogList() {
   });
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [mounted, setMounted] = useState(false);
 
   const { toast } = useToast();
 
@@ -85,6 +86,15 @@ export default function BlogList() {
     };
     loadFacets();
   }, []);
+
+  // control mount animation state
+  useEffect(() => {
+    if (!loading) {
+      const t = setTimeout(() => setMounted(true), 40);
+      return () => clearTimeout(t);
+    }
+    setMounted(false);
+  }, [loading]);
 
   const handleSearch = e => {
     e.preventDefault();
@@ -145,12 +155,12 @@ export default function BlogList() {
           <h1 className='text-3xl font-bold'>Blogs</h1>
           <p className='text-muted-foreground'>Manage your blog posts</p>
         </div>
-        <Button asChild>
-          <Link to='/blogs/create'>
-            <PlusCircle className='mr-2 h-4 w-4' />
-            Create Blog
-          </Link>
-        </Button>
+          <Button asChild className='transition-transform duration-150 hover:scale-105'>
+            <Link to='/blogs/create'>
+              <PlusCircle className='mr-2 h-4 w-4' />
+              Create Blog
+            </Link>
+          </Button>
       </div>
 
       {/* Filters */}
@@ -272,8 +282,14 @@ export default function BlogList() {
             </CardContent>
           </Card>
         ) : (
-          blogs.map(blog => (
-            <Card key={blog.id || blog._id}>
+          blogs.map((blog, idx) => (
+            <Card
+              key={blog.id || blog._id}
+              className={`transform transition-all duration-200 ${
+                mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+              } hover:shadow-lg hover:-translate-y-1`}
+              style={{ transitionDelay: `${idx * 60}ms` }}
+            >
               <CardContent className='p-6'>
                 <div className='flex flex-col md:flex-row gap-4'>
                   {/* Cover Image */}
@@ -321,7 +337,7 @@ export default function BlogList() {
 
                     {/* Actions */}
                     <div className='flex items-center gap-2 mt-3'>
-                      <Button variant='outline' size='sm' asChild>
+                      <Button className='transition-transform hover:scale-105' variant='outline' size='sm' asChild>
                         <Link to={`/blogs/edit/${blog.id || blog._id}`}>
                           <Edit className='mr-1 h-3 w-3' />
                           Edit
@@ -329,6 +345,7 @@ export default function BlogList() {
                       </Button>
                       {blog.status === 'draft' ? (
                         <Button
+                          className='transition-transform hover:scale-105'
                           variant='outline'
                           size='sm'
                           onClick={() =>
@@ -339,6 +356,7 @@ export default function BlogList() {
                         </Button>
                       ) : (
                         <Button
+                          className='transition-transform hover:scale-105'
                           variant='outline'
                           size='sm'
                           onClick={() => handleStatusChange(blog.id || blog._id, 'draft')}
@@ -348,7 +366,7 @@ export default function BlogList() {
                       )}
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant='destructive' size='sm'>
+                          <Button className='transition-transform hover:scale-105' variant='destructive' size='sm'>
                             <Trash2 className='mr-1 h-3 w-3' />
                             Delete
                           </Button>
@@ -387,6 +405,7 @@ export default function BlogList() {
             variant='outline'
             disabled={filters.page <= 1}
             onClick={() => setFilters(prev => ({ ...prev, page: prev.page - 1 }))}
+            className='transition-colors'
           >
             Previous
           </Button>
@@ -397,6 +416,7 @@ export default function BlogList() {
             variant='outline'
             disabled={filters.page >= pagination.totalPages}
             onClick={() => setFilters(prev => ({ ...prev, page: prev.page + 1 }))}
+            className='transition-colors'
           >
             Next
           </Button>
