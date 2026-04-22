@@ -26,6 +26,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { PlusCircle, Search, Edit, Trash2, Eye, MoreVertical } from 'lucide-react';
+import { formatDate } from '@/lib/utils';
 
 export default function BlogList() {
   const [blogs, setBlogs] = useState([]);
@@ -136,15 +137,6 @@ export default function BlogList() {
         variant: 'destructive',
       });
     }
-  };
-
-  const formatDate = date => {
-    if (!date) return 'Not published';
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
   };
 
   return (
