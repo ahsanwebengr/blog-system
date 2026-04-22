@@ -155,12 +155,12 @@ export default function BlogList() {
           <h1 className='text-3xl font-bold'>Blogs</h1>
           <p className='text-muted-foreground'>Manage your blog posts</p>
         </div>
-          <Button asChild className='transition-transform duration-150 hover:scale-105'>
-            <Link to='/blogs/create'>
-              <PlusCircle className='mr-2 h-4 w-4' />
-              Create Blog
-            </Link>
-          </Button>
+        <Button asChild className='transition-transform duration-150 hover:scale-105'>
+          <Link to='/blogs/create'>
+            <PlusCircle className='mr-2 h-4 w-4' />
+            Create Blog
+          </Link>
+        </Button>
       </div>
 
       {/* Filters */}
@@ -337,7 +337,12 @@ export default function BlogList() {
 
                     {/* Actions */}
                     <div className='flex items-center gap-2 mt-3'>
-                      <Button className='transition-transform hover:scale-105' variant='outline' size='sm' asChild>
+                      <Button
+                        className='transition-transform hover:scale-105'
+                        variant='outline'
+                        size='sm'
+                        asChild
+                      >
                         <Link to={`/blogs/edit/${blog.id || blog._id}`}>
                           <Edit className='mr-1 h-3 w-3' />
                           Edit
@@ -366,7 +371,11 @@ export default function BlogList() {
                       )}
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button className='transition-transform hover:scale-105' variant='destructive' size='sm'>
+                          <Button
+                            className='transition-transform hover:scale-105'
+                            variant='destructive'
+                            size='sm'
+                          >
                             <Trash2 className='mr-1 h-3 w-3' />
                             Delete
                           </Button>
