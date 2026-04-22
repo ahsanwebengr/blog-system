@@ -7,7 +7,9 @@ export function cn(...inputs) {
 
 export const formatDate = date => {
   if (!date) return 'Not published';
-  return new Date(date).toLocaleDateString('en-US', {
+  const parsedDate = new Date(date);
+  if (Number.isNaN(parsedDate.getTime())) return 'Not published';
+  return parsedDate.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
